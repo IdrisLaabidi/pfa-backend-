@@ -36,6 +36,35 @@ router.get('/users/:id', async (req, res) => {
   }
 });
 
+// Login route
+router.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+  
+    try {
+      // Find the user by email
+      const user = await User.findOne({ email });
+  
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      // Verify password
+      const isPasswordValid = await user.verifyPassword(password);
+      if (!isPasswordValid) {
+        return res.status(401).json({ message: 'Invalid credentials' });
+      }
+  
+      // Generate a JWT token
+      const token = jwt.sign({ userId: user._id }, 'your-secret-key', {
+        expiresIn: '1h', // Set token expiration time
+      });
+  
+      res.json({ token });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
 // Update a user by ID
 router.put('/users/:id', async (req, res) => {
   try {
