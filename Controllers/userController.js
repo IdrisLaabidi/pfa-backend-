@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 // Create a function to generate a token
 const generateToken = (user) => {
   // Sign a token with the user id and a secret key
-  return jwt.sign({ id: user._id }, "mysecretkey", { expiresIn: "1h" });
+  return jwt.sign({ id: user._id }, "pfa123", { expiresIn: "1h" });
 };
 
 // Create a function to register a new user
@@ -45,7 +45,7 @@ const login = async (req, res) => {
     }
 
     // Compare the password with the hashed password
-    const match = await user.comparePassword(password);
+    const match = await user.verifyPassword(password);
 
     // If the password does not match, throw an error
     if (!match) {
@@ -75,7 +75,7 @@ const verifyToken = (req, res, next) => {
     }
 
     // Verify the token with the secret key
-    const decoded = jwt.verify(token, "mysecretkey");
+    const decoded = jwt.verify(token, "pfa123");
 
     // Set the user id in the request object
     req.userId = decoded.id;
@@ -92,7 +92,7 @@ const verifyToken = (req, res, next) => {
 const profile = async (req, res) => {
   try {
     // Get the user id from the request object
-    const userId = req.userId;
+    const userId = req.params.id;
 
     // Find the user by id
     const user = await User.findById(userId);
@@ -110,5 +110,44 @@ const profile = async (req, res) => {
   }
 };
 
+// create a function to get all the users 
+const getAllUsers = async (req, res) => {
+  try {
+    // get all users
+    const users = await User.find();
+    // send users info as response 
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+//create a function to update a user 
+const updateUser =  async (req, res) => {
+  try {
+    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json(updatedUser);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+}
+
+// create a function to delete a user 
+const deleteUser = async (req, res) => {
+  try {
+    const deletedUser = await User.findByIdAndDelete(req.params.id);
+    if (!deletedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json({ message: 'User deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
 // Export the controller functions
-module.exports = { register, login, verifyToken, profile };
+module.exports = { register, login, verifyToken, profile ,getAllUsers ,updateUser, deleteUser};
