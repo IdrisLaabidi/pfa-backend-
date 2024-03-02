@@ -4,6 +4,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 //routers
 const userRouter = require('./Routes/userRoutes')
+const projectRouter = require('./Routes/projectRoutes')
 
 // express app
 const app = express()
@@ -18,6 +19,7 @@ app.use((req, res, next) => {
 
 // routes
 app.use('/api/auth',userRouter)
+app.use('/api/project',projectRouter)
 
 
 //connect to db

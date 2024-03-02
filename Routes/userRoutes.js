@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const {register, login, verifyToken, profile,getAllUsers, updateUser, deleteUser } = require('../Controllers/userController')
-const User = require('../Models/userModel'); // Import your User model
+
 
 // Create a new user
 router.post('/createuser', register);
