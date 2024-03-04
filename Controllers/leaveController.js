@@ -2,7 +2,7 @@
 const Leave = require('../Models/leaveModel'); // Import your Leave model
 
 // Create a new leave request
-const createLeaveRequest = async (req, res) => {
+const createLeave = async (req, res) => {
   try {
     const newLeaveRequest = await Leave.create(req.body);
     res.status(201).json(newLeaveRequest);
@@ -12,7 +12,7 @@ const createLeaveRequest = async (req, res) => {
 };
 
 // Get all leave requests
-const getAllLeaveRequests = async (req, res) => {
+const getAllLeaves = async (req, res) => {
   try {
     const leaveRequests = await Leave.find();
     res.json(leaveRequests);
@@ -22,7 +22,7 @@ const getAllLeaveRequests = async (req, res) => {
 };
 
 // Get a specific leave request by ID
-const getLeaveRequestById = async (req, res) => {
+const getLeaveById = async (req, res) => {
   try {
     const leaveRequest = await Leave.findById(req.params.id);
     if (!leaveRequest) {
@@ -35,7 +35,7 @@ const getLeaveRequestById = async (req, res) => {
 };
 
 // Update a leave request by ID
-const updateLeaveRequestById = async (req, res) => {
+const updateLeaveById = async (req, res) => {
   try {
     const updatedLeaveRequest = await Leave.findByIdAndUpdate(
       req.params.id,
@@ -52,7 +52,7 @@ const updateLeaveRequestById = async (req, res) => {
 };
 
 // Delete a leave request by ID
-const deleteLeaveRequestById = async (req, res) => {
+const deleteLeaveById = async (req, res) => {
   try {
     const deletedLeaveRequest = await Leave.findByIdAndDelete(req.params.id);
     if (!deletedLeaveRequest) {
@@ -65,9 +65,9 @@ const deleteLeaveRequestById = async (req, res) => {
 };
 
 module.exports = {
-  createLeaveRequest,
-  getAllLeaveRequests,
-  getLeaveRequestById,
-  updateLeaveRequestById,
-  deleteLeaveRequestById,
+  createLeave,
+  getAllLeaves,
+  getLeaveById,
+  updateLeaveById,
+  deleteLeaveById,
 };

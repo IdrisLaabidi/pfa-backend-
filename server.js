@@ -6,6 +6,7 @@ const mongoose = require('mongoose')
 const userRouter = require('./Routes/userRoutes')
 const taskRouter= require('./Routes/taskRoutes')
 const projectRouter = require('./Routes/projectRoutes')
+const leaveRouter = require('./Routes/leaveRoutes')
 
 
 // express app
@@ -21,10 +22,10 @@ app.use((req, res, next) => {
 
 // routes
 app.use('/api/auth',userRouter)
-
 app.use('/api/task',taskRouter)
-
 app.use('/api/project',projectRouter)
+app.use('/api/leave',leaveRouter)
+
 
 
 
