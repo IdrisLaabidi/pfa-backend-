@@ -5,13 +5,13 @@ const UserSchema = require('./userModel')
 const ProjectSchema = require('./projectModel')
 
 const MessageSchema = new mongoose.Schema({
-    _id : mongoose.Schema.Types.ObjectId,
+    id : mongoose.Schema.Types.ObjectId,
     content : {
         type : String
     },
-    sender : {type : UserSchema},
-    sentTo : [{type : UserSchema}],
-    project : {type : ProjectSchema},
+    sender : {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+    sentTo : [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
+    project : {type: mongoose.Schema.Types.ObjectId, ref: 'Project'},
     sentAt : {type : Date , default : Date.now}
 })
 
