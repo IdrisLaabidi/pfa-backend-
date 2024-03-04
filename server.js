@@ -3,8 +3,8 @@ const express = require('express');//imports the express framework
 const http = require('http');//import http module from nodejs
 const socketIo = require('socket.io');//import socket.io which enables RTC(RealTimeCommunication) between clients and a server
 const mongoose = require('mongoose')
-const userRouter = require('./Routes/userRoutes')
-const projectRouter = require('./Routes/projectRoutes')
+//const userRouter = require('./Routes/userRoutes')
+//const projectRouter = require('./Routes/projectRoutes')
 const app = express();//create express app
 const server = http.createServer(app);//create http server
 const io = socketIo(server, {
@@ -21,10 +21,10 @@ app.use((req, res, next) => {
 })
 
 // routes
-app.use('/api/auth',userRouter)
-app.use('/api/project',projectRouter)
+/*app.use('/api/auth',userRouter)
+app.use('/api/project',projectRouter)*/
 
-mongoose.connect(process.env.MONGO_URI)
+/*mongoose.connect(process.env.MONGO_URI)
 .then( () => {
   console.log("connected to db");
   // listen for requests
@@ -35,7 +35,7 @@ mongoose.connect(process.env.MONGO_URI)
 )
 .catch(
   (err) => console.log(err)
-);
+);*/
 io.on('connection', (socket) => { /*on method is able to listen to an event on(eventnamestring,event function) when client triggers that
                                   event the function is being calledback NB:eventnamestring is abitrarr(li howa) yaany mayhemesh lesm
                                   it has to match the name in the client side            */
