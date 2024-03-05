@@ -5,15 +5,17 @@ const socketIo = require('socket.io');//import socket.io which enables RTC(RealT
 const mongoose = require('mongoose')
 const userRouter = require('./Routes/userRoutes')
 const projectRouter = require('./Routes/projectRoutes')
+const messagesRouter = require('./Routes/messagesRoute');
 const app = express();//create express app
 const server = http.createServer(app);//create http server
+const { createMessage } = require('./Controllers/messagesController');
 const io = socketIo(server, {
   cors: {
     origin: "*", // Allow all origins for simplicity, but you should restrict this in production
     /*              cors(CrossOrigineResourceSharing) (*)===>let anyone within the netwrok to connect to the server   */
   }
 });
-app.use(express.json()) // instead of using body parser 
+app.use(express.json());// instead of using body parser 
 
 app.use((req, res, next) => {
   console.log(req.path, req.method)
@@ -23,19 +25,21 @@ app.use((req, res, next) => {
 // routes
 app.use('/api/auth',userRouter)
 app.use('/api/project',projectRouter)
+app.get('/api/addMessage',messagesRouter);
 
 mongoose.connect(process.env.MONGO_URI)
 .then( () => {
   console.log("connected to db");
   // listen for requests
   app.listen(process.env.PORT, () => {
-    console.log('listening on port', process.env.PORT)
+    console.log('listening on port', process.env.PORT||8080)
   })
  }
 )
 .catch(
   (err) => console.log(err)
 );
+
 io.on('connection', (socket) => { /*on method is able to listen to an event on(eventnamestring,event function) when client triggers that
                                   event the function is being calledback NB:eventnamestring is abitrarr(li howa) yaany mayhemesh lesm
                                   it has to match the name in the client side            */
@@ -51,14 +55,20 @@ io.on('connection', (socket) => { /*on method is able to listen to an event on(e
   
     // Broadcast to all other clients in the room except the sender
     socket.to(roomId).emit('user-joined', userId);
-  
+    
     console.log('user:', userId, 'joined room', roomId);
   });
-  socket.on('chat message', (msg) => {//same thing
-    console.log('message: ' + msg);
-    io.emit('chat message', msg); /* emit is a method that Broadcast the message(in our example) to all connected clients including 
-                                  the one who sent the message*/
-  });
+  socket.on('chat message', async (msg) => {
+    try {
+        console.log(msg);
+        const message = await createMessage(msg);
+        io.emit('chat message', msg); // Emit the saved message
+    } catch (error) {
+        console.error('Error sending message:', error);
+        // Handle the error appropriately
+        // You might want to emit an event back to the sender if needed
+    }
+});
 });
 
 const PORT = process.env.PORT || 8080;//sets port for the server to listen events on
