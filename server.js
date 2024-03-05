@@ -7,6 +7,7 @@ const userRouter = require('./Routes/userRoutes')
 const taskRouter= require('./Routes/taskRoutes')
 const projectRouter = require('./Routes/projectRoutes')
 const leaveRouter = require('./Routes/leaveRoutes')
+const notifRouter = require('./Routes/notificationRoutes')
 
 
 // express app
@@ -25,6 +26,7 @@ app.use('/api/auth',userRouter)
 app.use('/api/task',taskRouter)
 app.use('/api/project',projectRouter)
 app.use('/api/leave',leaveRouter)
+app.use('/api/notification',notifRouter)
 
 
 
