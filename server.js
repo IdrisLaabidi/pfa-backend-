@@ -8,7 +8,7 @@ const projectRouter = require('./Routes/projectRoutes')
 const messagesRouter = require('./Routes/messagesRoute');
 const app = express();//create express app
 const server = http.createServer(app);//create http server
-const { createMessage } = require('./Controllers/messagesController');
+const { createMessage, getAllMessages } = require('./Controllers/messagesController');
 const io = socketIo(server, {
   cors: {
     origin: "*", // Allow all origins for simplicity, but you should restrict this in production
@@ -26,6 +26,7 @@ app.use((req, res, next) => {
 app.use('/api/auth',userRouter)
 app.use('/api/project',projectRouter)
 app.get('/api/addMessage',messagesRouter);
+app.get('/api/allMessage',messagesRouter);
 
 mongoose.connect(process.env.MONGO_URI)
 .then( () => {
@@ -40,11 +41,12 @@ mongoose.connect(process.env.MONGO_URI)
   (err) => console.log(err)
 );
 
-io.on('connection', (socket) => { /*on method is able to listen to an event on(eventnamestring,event function) when client triggers that
+io.on('connection', async (socket) => { /*on method is able to listen to an event on(eventnamestring,event function) when client triggers that
                                   event the function is being calledback NB:eventnamestring is abitrarr(li howa) yaany mayhemesh lesm
                                   it has to match the name in the client side            */
   console.log('a user connected:', socket.id);
-  
+  const allMessages = await getAllMessages();
+  io.emit('allMessage',allMessages);
   socket.on('disconnect', () => {//same thing
     io.emit('user-left', socket.id);
     console.log('a user disconnected', socket.id);
@@ -60,13 +62,11 @@ io.on('connection', (socket) => { /*on method is able to listen to an event on(e
   });
   socket.on('chat message', async (msg) => {
     try {
-        console.log(msg);
-        const message = await createMessage(msg);
+        await createMessage(msg);
         io.emit('chat message', msg); // Emit the saved message
     } catch (error) {
         console.error('Error sending message:', error);
-        // Handle the error appropriately
-        // You might want to emit an event back to the sender if needed
+        // Handle the error {ya men 7yé}
     }
 });
 });
