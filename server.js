@@ -2,12 +2,16 @@ require('dotenv').config()
 
 const express = require('express')
 const mongoose = require('mongoose')
+const cors = require('cors')
 //routers
 const userRouter = require('./Routes/userRoutes')
 const projectRouter = require('./Routes/projectRoutes')
 
 // express app
 const app = express()
+
+// Enable CORS for all routes
+app.use(cors());
 
 // middleware
 app.use(express.json()) // instead of using body parser 
