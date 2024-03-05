@@ -1,15 +1,14 @@
 const mongoose = require('mongoose');
 
-// Define the User schema (for createdBy and assignedTo fields)
-const UserSchema = require('./userModel');
-
 // Define the Task model schema
 const TaskSchema = new mongoose.Schema({
-  _id : mongoose.Schema.Types.ObjectId,
+
+ // _id: mongoose.Schema.Types.ObjectId,
+
   title: { type: String, required: true },
   description: { type: String },
-  createdBy: { type: UserSchema, required: true }, // Reference to the User schema
-  assignedTo: [{ type: UserSchema }], // Array of User references
+  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference to the User schema
+  assignedTo: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // Array of User references
   status: { type: String, enum: ['pending', 'in-progress', 'completed'], default: 'pending' },
   priority: { type: String, enum: ['low', 'medium', 'high'], default: 'medium' },
   dueDate: { type: Date },

@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+
 
 // Define the User model schema
 const UserSchema = new mongoose.Schema({
-  _id : mongoose.Schema.Types.ObjectId,
+  id : mongoose.Schema.Types.ObjectId,
   userName: { type: String, required: true, unique: true },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
@@ -13,6 +15,29 @@ const UserSchema = new mongoose.Schema({
   pictureURL: { type: String }, // You can add validation rules for URLs if required
   leaveCount: { type: Number, default: 90 },
 });
+
+// Hash the password before saving
+UserSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+
+  try {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(this.password, salt);
+    this.password = hashedPassword;
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Verify password
+UserSchema.methods.verifyPassword = async function (candidatePassword) {
+  try {
+    return await bcrypt.compare(candidatePassword, this.password);
+  } catch (error) {
+    return false;
+  }
+};
 
 // Create and export the User model
 module.exports = mongoose.model('User', UserSchema);
