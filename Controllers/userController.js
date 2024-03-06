@@ -64,11 +64,12 @@ const login = async (req, res) => {
 };
 
 // Create a function to verify the token
-const verifyToken = (req, res, next) => {
+const verifyToken = (req, res) => {
   try {
+    //console.log(req.headers);
     // Get the token from the request header
-    const token = req.headers["authorization"];
-
+    const token = req.headers.authorization;
+    console.log('auths '+token);
     // If the token is not provided, throw an error
     if (!token) {
       throw new Error("No token provided");
@@ -76,15 +77,16 @@ const verifyToken = (req, res, next) => {
 
     // Verify the token with the secret key
     const decoded = jwt.verify(token, "pfa123");
-
+    console.log('decoded ',decoded)
     // Set the user id in the request object
     req.userId = decoded.id;
 
     // Call the next middleware
-    next();
+    res.json(req.userId);
   } catch (error) {
     // Send the error message as the response
-    res.status(401).json({ error: error.message });
+    //res.status(401).json({ error: error.message });
+    console.log(error);
   }
 };
 

@@ -22,4 +22,7 @@ router.put('/users/:id',updateUser);
 // Delete a user by ID
 router.delete('/users/:id', deleteUser);
 
+//Verify a given Token
+router.get('/validate',verifyToken);
+
 module.exports = router;

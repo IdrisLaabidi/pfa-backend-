@@ -36,7 +36,7 @@ app.get('/api/allMessage',messagesRouter);
 app.use('/api/task',taskRouter)
 app.use('/api/leave',leaveRouter)
 app.use('/api/notification',notifRouter);
-
+app.get('/api/auth/validate',userRouter);
 mongoose.connect(process.env.MONGO_URI)
 .then( () => {
   console.log("connected to db");
