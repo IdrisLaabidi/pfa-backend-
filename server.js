@@ -33,7 +33,7 @@ mongoose.connect(process.env.MONGO_URI)
   console.log("connected to db");
   // listen for requests
   app.listen(process.env.PORT, () => {
-    console.log('listening on port', process.env.PORT||8080)
+    console.log('listening on port', process.env.PORT||4000)
   })
  }
 )
@@ -71,5 +71,5 @@ io.on('connection', async (socket) => { /*on method is able to listen to an even
 });
 });
 
-const PORT = process.env.PORT || 8080;//sets port for the server to listen events on
+const PORT = process.env.PORT || 4000;//sets port for the server to listen events on
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));//once server is listening or is running we log a message
