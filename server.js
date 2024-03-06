@@ -2,10 +2,14 @@ require('dotenv').config();
 const express = require('express');//imports the express framework
 const http = require('http');//import http module from nodejs
 const socketIo = require('socket.io');//import socket.io which enables RTC(RealTimeCommunication) between clients and a server
-const mongoose = require('mongoose')
-const userRouter = require('./Routes/userRoutes')
-const projectRouter = require('./Routes/projectRoutes')
+const mongoose = require('mongoose');
+const userRouter = require('./Routes/userRoutes');
+const projectRouter = require('./Routes/projectRoutes');
 const messagesRouter = require('./Routes/messagesRoute');
+const taskRouter= require('./Routes/taskRoutes');
+const leaveRouter = require('./Routes/leaveRoutes');
+const notifRouter = require('./Routes/notificationRoutes');
+
 const app = express();//create express app
 const server = http.createServer(app);//create http server
 const { createMessage, getAllMessages } = require('./Controllers/messagesController');
@@ -15,6 +19,8 @@ const io = socketIo(server, {
     /*              cors(CrossOrigineResourceSharing) (*)===>let anyone within the netwrok to connect to the server   */
   }
 });
+const cors = require('cors');
+app.use(cors());
 app.use(express.json());// instead of using body parser 
 
 app.use((req, res, next) => {
@@ -27,6 +33,9 @@ app.use('/api/auth',userRouter)
 app.use('/api/project',projectRouter)
 app.get('/api/addMessage',messagesRouter);
 app.get('/api/allMessage',messagesRouter);
+app.use('/api/task',taskRouter)
+app.use('/api/leave',leaveRouter)
+app.use('/api/notification',notifRouter);
 
 mongoose.connect(process.env.MONGO_URI)
 .then( () => {
