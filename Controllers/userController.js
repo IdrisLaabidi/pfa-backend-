@@ -1,13 +1,14 @@
 // userController.js
-
 // Import modules
 const User = require("../Models/userModel");
 const jwt = require("jsonwebtoken");
 
+const asyncHandler = require('express-async-handler')
+
 // Create a function to generate a token
 const generateToken = (user) => {
   // Sign a token with the user id and a secret key
-  return jwt.sign({ id: user._id }, "pfa123", { expiresIn: "1h" });
+  return jwt.sign({ id: user._id },  process.env.SECRET_KEY, { expiresIn: "1h" });
 };
 
 // Create a function to register a new user
@@ -56,33 +57,8 @@ const login = async (req, res) => {
     const token = generateToken(user);
 
     // Send the token and the user info as the response
-    res.json({ token, user });
-  } catch (error) {
-    // Send the error message as the response
-    res.status(401).json({ error: error.message });
-  }
-};
-
-// Create a function to verify the token
-const verifyToken = (req, res) => {
-  try {
-    //console.log(req.headers);
-    // Get the token from the request header
-    const token = req.headers.authorization;
-    console.log('auths '+token);
-    // If the token is not provided, throw an error
-    if (!token) {
-      throw new Error("No token provided");
-    }
-
-    // Verify the token with the secret key
-    const decoded = jwt.verify(token, "pfa123");
-    console.log('decoded ',decoded)
-    // Set the user id in the request object
-    req.userId = decoded.id;
-
-    // Call the next middleware
-    res.json(req.userId);
+    res.cookie('token',token, { maxAge: 86400000 , httpOnly: true })
+    res.json({ user });
   } catch (error) {
     // Send the error message as the response
     //res.status(401).json({ error: error.message });
@@ -91,7 +67,7 @@ const verifyToken = (req, res) => {
 };
 
 // Create a function to get the user profile
-const profile = async (req, res) => {
+const profile =asyncHandler( async (req, res) => {
   try {
     // Get the user id from the request object
     const userId = req.params.id;
@@ -110,10 +86,10 @@ const profile = async (req, res) => {
     // Send the error message as the response
     res.status(404).json({ error: error.message });
   }
-};
+});
 
 // create a function to get all the users 
-const getAllUsers = async (req, res) => {
+const getAllUsers = asyncHandler(async (req, res) => {
   try {
     // get all users
     const users = await User.find();
@@ -122,9 +98,9 @@ const getAllUsers = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-}
+})
 //create a function to update a user 
-const updateUser =  async (req, res) => {
+const updateUser =asyncHandler(  async (req, res) => {
   try {
     const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -136,10 +112,10 @@ const updateUser =  async (req, res) => {
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-}
+})
 
 // create a function to delete a user 
-const deleteUser = async (req, res) => {
+const deleteUser =asyncHandler( async (req, res) => {
   try {
     const deletedUser = await User.findByIdAndDelete(req.params.id);
     if (!deletedUser) {
@@ -149,7 +125,6 @@ const deleteUser = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-}
-
+})
 // Export the controller functions
-module.exports = { register, login, verifyToken, profile ,getAllUsers ,updateUser, deleteUser};
+module.exports = { register, login, profile ,getAllUsers ,updateUser, deleteUser};

@@ -1,24 +1,23 @@
-require('dotenv').config();   
-const express = require('express');//imports the express framework
-const http = require('http');//import http module from nodejs
-const socketIo = require('socket.io');//import socket.io which enables RTC(RealTimeCommunication) between clients and a server
-const mongoose = require('mongoose');
-const userRouter = require('./Routes/userRoutes');
-const projectRouter = require('./Routes/projectRoutes');
-const messagesRouter = require('./Routes/messagesRoute');
-const taskRouter= require('./Routes/taskRoutes');
-const leaveRouter = require('./Routes/leaveRoutes');
-const notifRouter = require('./Routes/notificationRoutes');
-const app = express();//create express app
-const server = http.createServer(app);//create http server
-const { createMessage, getAllMessages } = require('./Controllers/messagesController');
-const io = socketIo(server, {
-  cors: {
-    origin: "*", // Allow all origins for simplicity, but you should restrict this in production
-    /*              cors(CrossOrigineResourceSharing) (*)===>let anyone within the netwrok to connect to the server   */
-  }
-});
-const cors = require('cors');
+require('dotenv').config()
+
+const express = require('express')
+const mongoose = require('mongoose')
+const cors = require('cors')
+const cookieParser = require('cookie-parser')
+//routers
+const userRouter = require('./Routes/userRoutes')
+const taskRouter= require('./Routes/taskRoutes')
+const projectRouter = require('./Routes/projectRoutes')
+const leaveRouter = require('./Routes/leaveRoutes')
+const notifRouter = require('./Routes/notificationRoutes')
+//import middleware
+const { errorHandler} = require('./Middleware/errorMiddleware')
+
+
+// express app
+const app = express()
+
+// Enable CORS for all routes
 app.use(cors());
 app.use(express.json());// instead of using body parser 
 
@@ -27,6 +26,9 @@ app.use((req, res, next) => {
   next()
 })
 
+app.use(cookieParser());
+
+
 // routes
 app.use('/api/auth',userRouter)
 app.use('/api/project',projectRouter)
@@ -34,8 +36,12 @@ app.get('/api/addMessage',messagesRouter);
 app.get('/api/allMessage',messagesRouter);
 app.use('/api/task',taskRouter)
 app.use('/api/leave',leaveRouter)
-app.use('/api/notification',notifRouter);
-app.get('/api/auth/validate',userRouter);
+app.use('/api/notification',notifRouter)
+
+
+
+app.use(errorHandler);
+//connect to db
 mongoose.connect(process.env.MONGO_URI)
 .then( () => {
   console.log("connected to db");
