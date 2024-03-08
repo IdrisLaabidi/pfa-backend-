@@ -9,7 +9,6 @@ const messagesRouter = require('./Routes/messagesRoute');
 const taskRouter= require('./Routes/taskRoutes');
 const leaveRouter = require('./Routes/leaveRoutes');
 const notifRouter = require('./Routes/notificationRoutes');
-
 const app = express();//create express app
 const server = http.createServer(app);//create http server
 const { createMessage, getAllMessages } = require('./Controllers/messagesController');
