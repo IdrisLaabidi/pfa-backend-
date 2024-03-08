@@ -1,10 +1,10 @@
 // project controller
-
+const asyncHandler = require('express-async-handler')
 //import modules 
 const Project = require('../Models/projectModel')
 
 //create a function to add a project 
-const createProject = async (req,res) => {
+const createProject =asyncHandler(async (req,res) => {
     try {
         // create the new project
         const newProject = await Project.create(req.body);
@@ -12,20 +12,20 @@ const createProject = async (req,res) => {
       } catch (error) {
         res.status(400).json({ error: error.message });
       }
-}
+})
 
 //create a function to get all projects
-const getAllProjects = async (req,res) => {
+const getAllProjects = asyncHandler(async (req,res) => {
     try {
         const projects = await Project.find();
         res.json(projects);
       } catch (error) {
         res.status(500).json({ error: error.message });
       }
-}
+})
 
 // Get a specific project by ID
-const getProject = async (req, res) => {
+const getProject = asyncHandler(async (req, res) => {
     try {
       const project = await Project.findById(req.params.id);
       if (!project) {
@@ -35,10 +35,10 @@ const getProject = async (req, res) => {
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
-}
+})
   
 // Update a project by ID
-const updateProject =  async (req, res) => {
+const updateProject =  asyncHandler(async (req, res) => {
     try {
       const updatedProject = await Project.findByIdAndUpdate(
         req.params.id,
@@ -52,10 +52,10 @@ const updateProject =  async (req, res) => {
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
-}
+})
   
 // Delete a project by ID
-const deleteProject = async (req, res) => {
+const deleteProject = asyncHandler(async (req, res) => {
     try {
       const deletedProject = await Project.findByIdAndDelete(req.params.id);
       if (!deletedProject) {
@@ -65,8 +65,7 @@ const deleteProject = async (req, res) => {
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
-}
-
+})
 //export the controller functions.
 module.exports = {createProject , getAllProjects , getProject , updateProject , deleteProject}
   

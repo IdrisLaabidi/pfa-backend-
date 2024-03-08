@@ -3,12 +3,15 @@ require('dotenv').config()
 const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
+const cookieParser = require('cookie-parser')
 //routers
 const userRouter = require('./Routes/userRoutes')
 const taskRouter= require('./Routes/taskRoutes')
 const projectRouter = require('./Routes/projectRoutes')
 const leaveRouter = require('./Routes/leaveRoutes')
 const notifRouter = require('./Routes/notificationRoutes')
+//import middleware
+const { errorHandler} = require('./Middleware/errorMiddleware')
 
 
 // express app
@@ -25,6 +28,9 @@ app.use((req, res, next) => {
   next()
 })
 
+app.use(cookieParser());
+
+
 // routes
 app.use('/api/auth',userRouter)
 app.use('/api/task',taskRouter)
@@ -34,7 +40,7 @@ app.use('/api/notification',notifRouter)
 
 
 
-
+app.use(errorHandler);
 //connect to db
 mongoose.connect(process.env.MONGO_URI)
 .then( () => {

@@ -1,28 +1,29 @@
 // Import necessary modules
 const Task = require('../Models/taskModel'); // Import your Task model
+const asyncHandler = require('express-async-handler')
 
 // Create a new task
-const createTask = async (req, res) => {
+const createTask = asyncHandler(async (req, res) => {
   try {
     const newTask = await Task.create(req.body);
     res.status(201).json(newTask);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-};
+});
 
 // Get all tasks
-const getAllTasks = async (req, res) => {
+const getAllTasks = asyncHandler(async (req, res) => {
   try {
     const tasks = await Task.find();
     res.json(tasks);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+});
 
 // Get a specific task by ID
-const getTaskById = async (req, res) => {
+const getTaskById = asyncHandler(async (req, res) => {
   try {
     const task = await Task.findById(req.params.id);
     if (!task) {
@@ -32,10 +33,10 @@ const getTaskById = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+});
 
 // Update a task by ID
-const updateTaskById = async (req, res) => {
+const updateTaskById = asyncHandler(async (req, res) => {
   try {
     const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -47,10 +48,10 @@ const updateTaskById = async (req, res) => {
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-};
+});
 
 // Delete a task by ID
-const deleteTaskById = async (req, res) => {
+const deleteTaskById = asyncHandler(async (req, res) => {
   try {
     const deletedTask = await Task.findByIdAndDelete(req.params.id);
     if (!deletedTask) {
@@ -60,7 +61,7 @@ const deleteTaskById = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+});
 
 module.exports = {
   createTask,
