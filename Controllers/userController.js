@@ -57,7 +57,7 @@ const login = async (req, res) => {
     const token = generateToken(user);
 
     // Send the token and the user info as the response
-    res.cookie('tokeeun',token, { maxAge: 86400000 , httpOnly: false })
+    res.cookie('tokeeun',token, { maxAge: 86400000 , httpOnly: false,secure : false })
     res.json({ user,token });
   } catch (error) {
     // Send the error message as the response
