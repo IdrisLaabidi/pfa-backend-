@@ -18,7 +18,10 @@ const { errorHandler} = require('./Middleware/errorMiddleware')
 const app = express()
 
 // Enable CORS for all routes
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}));
 
 // middleware
 app.use(express.json()) // instead of using body parser 
