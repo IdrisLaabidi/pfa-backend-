@@ -24,7 +24,8 @@ const register = async (req, res) => {
     const token = generateToken(user);
 
     // Send the token and the user info as the response
-    res.json({ token, user });
+    res.cookie('token',token, { maxAge: 86400000 , httpOnly: false,secure : false })
+    res.json( user );
   } catch (error) {
     // Send the error message as the response
     res.status(400).json({ error: error.message });
