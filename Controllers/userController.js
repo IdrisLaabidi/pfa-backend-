@@ -28,6 +28,7 @@ const register = async (req, res) => {
     res.json( user );
   } catch (error) {
     // Send the error message as the response
+    console.log(error.message)
     res.status(400).json({ error: error.message });
   }
 };
