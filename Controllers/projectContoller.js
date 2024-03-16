@@ -66,6 +66,19 @@ const deleteProject = asyncHandler(async (req, res) => {
       res.status(500).json({ error: error.message });
     }
 })
+//Get projects associated with a team leader(project manager)
+const getUserProjects = asyncHandler(
+  async (req,res) => {
+    try {
+      const userId = req.params.id
+      const projects= await Project.find({manager : userId})
+      res.json(projects)
+    } catch (error) {
+      res.status(400).json(error)
+      console.log(error)
+    }
+  }
+)
 //export the controller functions.
-module.exports = {createProject , getAllProjects , getProject , updateProject , deleteProject}
+module.exports = {createProject , getAllProjects , getProject , updateProject , deleteProject,getUserProjects}
   
