@@ -5,7 +5,6 @@ const bcrypt = require('bcrypt');
 // Define the User model schema
 const UserSchema = new mongoose.Schema({
   id : mongoose.Schema.Types.ObjectId,
-  userName: { type: String, required: true, unique: true },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
@@ -14,6 +13,7 @@ const UserSchema = new mongoose.Schema({
   isActive: { type: Boolean, default: true },
   pictureURL: { type: String }, // You can add validation rules for URLs if required
   leaveCount: { type: Number, default: 90 },
+  projects:[{ type: mongoose.Schema.Types.ObjectId, ref: 'User'}],//for member users 
 });
 
 // Hash the password before saving
