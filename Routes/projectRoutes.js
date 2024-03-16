@@ -11,7 +11,7 @@ const { protect } = require('../Middleware/authMiddleware');
 router.post('/',protect, createProject);
 
 // Get all projects
-router.get('/',protect, getAllProjects);
+router.get('/', getAllProjects);
 
 // Get a specific project by ID
 router.get('/:id',protect, getProject);

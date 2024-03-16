@@ -38,7 +38,7 @@ app.use(cookieParser());
 // routes
 app.use('/api/auth',userRouter)
 app.use('/api/task',taskRouter)
-app.use('/api/project',projectRouter)
+app.use('/api/projects',projectRouter)
 app.use('/api/leave',leaveRouter)
 app.use('/api/notification',notifRouter)
 
