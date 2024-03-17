@@ -2,6 +2,7 @@
 const asyncHandler = require('express-async-handler')
 //import modules 
 const Project = require('../Models/projectModel')
+const User = require('../Models/userModel')
 
 //create a function to add a project 
 const createProject =asyncHandler(async (req,res) => {
@@ -66,6 +67,32 @@ const deleteProject = asyncHandler(async (req, res) => {
       res.status(500).json({ error: error.message });
     }
 })
+//Get projects associated with a team leader(project manager)
+const getUserProjects = asyncHandler(
+  async (req,res) => {
+    try {
+      const userId = req.params.id
+      const user = await User.findById(userId)
+      let projects
+      if(user){
+        if(user.role === 'leader'){
+          projects= await Project.find({manager : userId})//find projects in which the user is the manager 
+        }
+        if(user.role === 'member'){
+          const pIds = user.projects //project ids that the user is a member in
+          projects = await Project.find({"_id" :{"$in" : pIds}})
+        }
+      }
+      if(!user){
+        res.status(404).json({message : 'user not found'})
+      }
+      res.json(projects)
+    } catch (error) {
+      res.status(400).json(error)
+      console.log(error)
+    }
+  }
+)
 //export the controller functions.
-module.exports = {createProject , getAllProjects , getProject , updateProject , deleteProject}
+module.exports = {createProject , getAllProjects , getProject , updateProject , deleteProject,getUserProjects}
   

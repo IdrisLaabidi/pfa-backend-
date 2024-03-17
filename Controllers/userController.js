@@ -1,6 +1,7 @@
 // userController.js
 // Import modules
 const User = require("../Models/userModel");
+const Task = require("../Models/taskModel")
 const jwt = require("jsonwebtoken");
 
 const asyncHandler = require('express-async-handler')
@@ -126,5 +127,22 @@ const deleteUser =asyncHandler( async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 })
+// get users associated to a certain tasks(assigned to)
+const getUsersByTask = asyncHandler( async (req,res) => {
+  try {
+    const task = await Task.findById(req.params.id)
+    if(!task){
+      throw Error("task not found")
+    }
+    if(task){
+      uIds = task.assignedTo
+      const users = await User.find({"_id" : {"$in" : uIds}})
+      res.status(200).json(users)
+    }
+  } catch (error) {
+    res.status(500).send({ error: error.message })
+  }
+})
+
 // Export the controller functions
-module.exports = { register, login, profile ,getAllUsers ,updateUser, deleteUser};
+module.exports = { register, login, profile ,getAllUsers ,updateUser, deleteUser,getUsersByTask};

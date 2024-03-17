@@ -1,6 +1,7 @@
 // Import necessary modules
 const Task = require('../Models/taskModel'); // Import your Task model
 const asyncHandler = require('express-async-handler')
+const Project = require('../Models/projectModel')
 
 // Create a new task
 const createTask = asyncHandler(async (req, res) => {
@@ -62,6 +63,22 @@ const deleteTaskById = asyncHandler(async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+// Get all tasks by project
+const getTasksByProject = asyncHandler(async (req,res) => {
+    try {
+      const project = await Project.findById(req.params.id)
+      if(!project){
+        throw Error("project not found")
+      }
+      if(project){
+        tIds = project.tasks
+        const tasks = await Task.find({"_id" : {"$in" : tIds}}) 
+        res.status(200).json(tasks)
+      }
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+})
 
 module.exports = {
   createTask,
@@ -69,4 +86,5 @@ module.exports = {
   getTaskById,
   updateTaskById,
   deleteTaskById,
+  getTasksByProject
 };
