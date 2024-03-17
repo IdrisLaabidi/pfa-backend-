@@ -9,11 +9,11 @@ const UserSchema = new mongoose.Schema({
   lastName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  role: { type: String, enum: ['leader', 'member'], default: 'member' },
+  role: { type: String, enum: ['leader', 'member','admin'], default: 'member' },
   isActive: { type: Boolean, default: true },
   pictureURL: { type: String }, // You can add validation rules for URLs if required
   leaveCount: { type: Number, default: 90 },
-  projects:[{ type: mongoose.Schema.Types.ObjectId, ref: 'User'}],//for member users 
+  projects:[{ type: mongoose.Schema.Types.ObjectId, ref: 'Project'}],//for member users 
 });
 
 // Hash the password before saving
