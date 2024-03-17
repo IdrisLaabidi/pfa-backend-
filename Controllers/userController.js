@@ -1,6 +1,7 @@
 // userController.js
 // Import modules
 const User = require("../Models/userModel");
+const Task = require("../Models/taskModel")
 const jwt = require("jsonwebtoken");
 
 const asyncHandler = require('express-async-handler')
@@ -8,7 +9,7 @@ const asyncHandler = require('express-async-handler')
 // Create a function to generate a token
 const generateToken = (user) => {
   // Sign a token with the user id and a secret key
-  return jwt.sign({ id: user._id },  process.env.SECRET_KEY, { expiresIn: "1h" });
+  return jwt.sign({ id: user._id },  process.env.SECRET_KEY, { expiresIn: "24h" });
 };
 
 // Create a function to register a new user
@@ -24,7 +25,8 @@ const register = async (req, res) => {
     const token = generateToken(user);
 
     // Send the token and the user info as the response
-    res.json({ token, user });
+    res.cookie('token',token, { maxAge: 86400000 , httpOnly: false,secure : false })
+    res.json( user );
   } catch (error) {
     // Send the error message as the response
     res.status(400).json({ error: error.message });
@@ -124,5 +126,22 @@ const deleteUser =asyncHandler( async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 })
+// get users associated to a certain tasks(assigned to)
+const getUsersByTask = asyncHandler( async (req,res) => {
+  try {
+    const task = await Task.findById(req.params.id)
+    if(!task){
+      throw Error("task not found")
+    }
+    if(task){
+      uIds = task.assignedTo
+      const users = await User.find({"_id" : {"$in" : uIds}})
+      res.status(200).json(users)
+    }
+  } catch (error) {
+    res.status(500).send({ error: error.message })
+  }
+})
+
 // Export the controller functions
-module.exports = { register, login, profile ,getAllUsers ,updateUser, deleteUser};
+module.exports = { register, login, profile ,getAllUsers ,updateUser, deleteUser,getUsersByTask};
