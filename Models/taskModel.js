@@ -16,5 +16,5 @@ const TaskSchema = new mongoose.Schema({
   completedAt: { type: Date },
 });
 
-// Create and export the Task model
+// Create and export the Task model 
 module.exports = mongoose.model('Task', TaskSchema);
