@@ -2,13 +2,13 @@
 // Import modules
 const User = require("../Models/userModel");
 const jwt = require("jsonwebtoken");
-
+const bcrypt = require('bcrypt');
 const asyncHandler = require('express-async-handler')
 
 // Create a function to generate a token
 const generateToken = (user) => {
   // Sign a token with the user id and a secret key
-  return jwt.sign({ id: user._id },  process.env.SECRET_KEY, { expiresIn: "1h" });
+  return jwt.sign({ id: user._id },  process.env.SECRET_KEY, { expiresIn: "24h" });
 };
 
 // Create a function to register a new user
@@ -57,12 +57,11 @@ const login = async (req, res) => {
     const token = generateToken(user);
 
     // Send the token and the user info as the response
-    res.cookie('token',token, { maxAge: 86400000 , httpOnly: true })
+    res.cookie('token',token, { maxAge: 86400000 , httpOnly: false,secure : false })
     res.json({ user });
   } catch (error) {
     // Send the error message as the response
-    //res.status(401).json({ error: error.message });
-    console.log(error);
+    res.status(401).json({ error: error.message });
   }
 };
 
@@ -79,7 +78,6 @@ const profile =asyncHandler( async (req, res) => {
     if (!user) {
       throw new Error("User not found");
     }
-
     // Send the user info as the response
     res.json({ user });
   } catch (error) {
@@ -100,19 +98,47 @@ const getAllUsers = asyncHandler(async (req, res) => {
   }
 })
 //create a function to update a user 
-const updateUser =asyncHandler(  async (req, res) => {
+const updateUser = asyncHandler(async (req, res) => {
   try {
-    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
-    if (!updatedUser) {
+    const user = await User.findById(req.params.id);
+    if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
+
+    // If a new password is provided, hash it before saving
+    if (req.body.password) {
+    //check if the current password is the actual user password
+      const currentPasswordMatch = await bcrypt.compare(req.body.currentPassword, user.password);
+      if (!currentPasswordMatch) {
+        console.log('mdp',req.body.password);
+        return res.status(401).json({ message: 'Current password is incorrect' });
+      }
+
+      // Hash the new password
+      
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(req.body.password, salt);
+      
+      // Update the password in the user object
+      user.password = hashedPassword;
+    }
+
+    // Update other user fields
+    if (req.body.firstName) user.firstName = req.body.firstName;
+    if (req.body.lastName) user.lastName = req.body.lastName;
+    if (req.body.userName) user.userName = req.body.userName;
+    if (req.body.email) user.email = req.body.email;
+
+    // Save the updated user
+    const updatedUser = await user.updateOne();
+
+    // Return the updated user data
     res.json(updatedUser);
   } catch (error) {
+    console.log(error);
     res.status(400).json({ error: error.message });
   }
-})
+});
 
 // create a function to delete a user 
 const deleteUser =asyncHandler( async (req, res) => {

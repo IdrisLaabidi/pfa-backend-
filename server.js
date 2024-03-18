@@ -1,34 +1,40 @@
-require('dotenv').config()
+require('dotenv').config(); 
 
-const express = require('express')
-const mongoose = require('mongoose')
-const cors = require('cors')
+const express = require('express');//imports the express framework
+const http = require('http');//import http module from nodejs
+const socketIo = require('socket.io');//import socket.io which enables RTC(RealTimeCommunication) between clients and a server
+const mongoose = require('mongoose');
+const app = express();//create express app
+const server = http.createServer(app);//create http server
+const { createMessage, getAllMessages } = require('./Controllers/messagesController');
+const io = socketIo(server, {
+  cors: {
+    origin: "*", // Allow all origins for simplicity, but you should restrict this in production
+    /*              cors(CrossOrigineResourceSharing) (*)===>let anyone within the netwrok to connect to the server   */
+  }
+});
+const cors = require('cors');
 const cookieParser = require('cookie-parser')
-//routers
-const userRouter = require('./Routes/userRoutes')
-const taskRouter= require('./Routes/taskRoutes')
-const projectRouter = require('./Routes/projectRoutes')
-const leaveRouter = require('./Routes/leaveRoutes')
-const notifRouter = require('./Routes/notificationRoutes')
-//import middleware
-const { errorHandler} = require('./Middleware/errorMiddleware')
 
 
-// express app
-const app = express()
+//routes 
+const userRouter = require('./Routes/userRoutes');
+const projectRouter = require('./Routes/projectRoutes');
+const messagesRouter = require('./Routes/messagesRoute');
+const taskRouter= require('./Routes/taskRoutes');
+const leaveRouter = require('./Routes/leaveRoutes');
+const notifRouter = require('./Routes/notificationRoutes');
 
-// Enable CORS for all routes
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000', // or the specific origin of your front-end
+  credentials: true
+}));
 app.use(express.json());// instead of using body parser 
-
 app.use((req, res, next) => {
   console.log(req.path, req.method)
   next()
 })
-
-app.use(cookieParser());
-
-
+app.use(cookieParser())
 // routes
 app.use('/api/auth',userRouter)
 app.use('/api/project',projectRouter)
@@ -36,12 +42,9 @@ app.get('/api/addMessage',messagesRouter);
 app.get('/api/allMessage',messagesRouter);
 app.use('/api/task',taskRouter)
 app.use('/api/leave',leaveRouter)
-app.use('/api/notification',notifRouter)
+app.use('/api/notification',notifRouter);
 
 
-
-app.use(errorHandler);
-//connect to db
 mongoose.connect(process.env.MONGO_URI)
 .then( () => {
   console.log("connected to db");
@@ -54,7 +57,6 @@ mongoose.connect(process.env.MONGO_URI)
 .catch(
   (err) => console.log(err)
 );
-
 io.on('connection', async (socket) => { /*on method is able to listen to an event on(eventnamestring,event function) when client triggers that
                                   event the function is being calledback NB:eventnamestring is abitrarr(li howa) yaany mayhemesh lesm
                                   it has to match the name in the client side            */
@@ -84,6 +86,5 @@ io.on('connection', async (socket) => { /*on method is able to listen to an even
     }
 });
 });
-
 const PORT = process.env.PORT || 4000;//sets port for the server to listen events on
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));//once server is listening or is running we log a message
