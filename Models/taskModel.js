@@ -3,8 +3,7 @@ const mongoose = require('mongoose');
 // Define the Task model schema
 const TaskSchema = new mongoose.Schema({
 
-  _id: mongoose.Schema.Types.ObjectId,
-
+  id: mongoose.Schema.Types.ObjectId,
   title: { type: String, required: true },
   description: { type: String },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference to the User schema

@@ -6,10 +6,14 @@ const Project = require('../Models/projectModel')
 // Create a new task
 const createTask = asyncHandler(async (req, res) => {
   try {
-    const newTask = await Task.create(req.body);
+    console.log(req.body)
+    const newTask = await Task.create(req.body.task);
+    const pId = req.body.id
+    await Project.updateOne({_id : pId },{ $push : {tasks : newTask._id}})
     res.status(201).json(newTask);
   } catch (error) {
     res.status(400).json({ error: error.message });
+    console.log(error)
   }
 });
 

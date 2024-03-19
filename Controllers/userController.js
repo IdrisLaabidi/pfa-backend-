@@ -30,6 +30,7 @@ const register = async (req, res) => {
   } catch (error) {
     // Send the error message as the response
     res.status(400).json({ error: error.message });
+    console.log(error)
   }
 };
 
