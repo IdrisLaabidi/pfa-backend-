@@ -9,6 +9,12 @@ const createProject =asyncHandler(async (req,res) => {
     try {
         // create the new project
         const newProject = await Project.create(req.body);
+        //update users' "projects" array to contain the new project id
+        const userIds = req.body.team;
+        await User.updateMany(
+          {_id: {$in: userIds}},
+          {$push: {projects: newProject._id}}
+        );
         res.status(201).json(newProject);
       } catch (error) {
         res.status(400).json({ error: error.message });
