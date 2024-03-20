@@ -6,7 +6,6 @@ const socketIo = require('socket.io');//import socket.io which enables RTC(RealT
 const mongoose = require('mongoose');
 const app = express();//create express app
 const server = http.createServer(app);//create http server
-const { createMessage, getAllMessages } = require('./Controllers/messagesController');
 const io = socketIo(server, {
   cors: {
     origin: "*", // Allow all origins for simplicity, but you should restrict this in production
@@ -21,9 +20,12 @@ const taskRouter= require('./Routes/taskRoutes')
 const projectRouter = require('./Routes/projectRoutes')
 const leaveRouter = require('./Routes/leaveRoutes')
 const notifRouter = require('./Routes/notificationRoutes')
+const messagesRouter = require('./Routes/messagesRoute')
+
 //import middleware
 const { errorHandler} = require('./Middleware/errorMiddleware')
-
+//import addMessage from controller it's all in the back better than using the api in the front
+const {createMessage} = require('./Controllers/messagesController')
 // Enable CORS for all routes
 app.use(cors({
   origin: 'http://localhost:3000',
@@ -41,15 +43,11 @@ app.use((req, res, next) => {
 app.use(cookieParser())
 // routes
 app.use('/api/auth',userRouter)
-app.use('/api/project',projectRouter)
-app.get('/api/addMessage',messagesRouter);
-app.get('/api/allMessage',messagesRouter);
-app.use('/api/task',taskRouter)
+app.use('/api/messages',messagesRouter);
 app.use('/api/task',taskRouter)
 app.use('/api/projects',projectRouter)
 app.use('/api/leave',leaveRouter)
 app.use('/api/notification',notifRouter);
-
 
 mongoose.connect(process.env.MONGO_URI)
 .then( () => {
@@ -67,8 +65,6 @@ io.on('connection', async (socket) => { /*on method is able to listen to an even
                                   event the function is being calledback NB:eventnamestring is abitrarr(li howa) yaany mayhemesh lesm
                                   it has to match the name in the client side            */
   console.log('a user connected:', socket.id);
-  const allMessages = await getAllMessages();
-  io.emit('allMessage',allMessages);
   socket.on('disconnect', () => {//same thing
     io.emit('user-left', socket.id);
     console.log('a user disconnected', socket.id);

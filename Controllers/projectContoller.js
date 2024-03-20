@@ -73,7 +73,7 @@ const deleteProject = asyncHandler(async (req, res) => {
       res.status(500).json({ error: error.message });
     }
 })
-//Get projects associated with a team leader(project manager)
+//Get projects associated with a team leader(project manager+memeber)
 const getUserProjects = asyncHandler(
   async (req,res) => {
     try {
@@ -99,6 +99,30 @@ const getUserProjects = asyncHandler(
     }
   }
 )
+const getProjectUsers = asyncHandler(
+  async (req, res) => {
+    try {
+      const projectId = req.params.id;
+      const project = await Project.findById(projectId);
+      
+      let users;
+      if (project) {
+        users = project.team;
+        const teamMembers = await User.find({_id: {$in: users}});
+        users = teamMembers; // Update 'users' with the actual user objects
+        
+      }
+      if (!project) {
+        res.status(404).json({ message: 'Project not found' });
+      }
+      res.json(users);
+    } catch (error) {
+      res.status(400).json(error);
+      console.log(error);
+    }
+  }
+);
+
 //export the controller functions.
-module.exports = {createProject , getAllProjects , getProject , updateProject , deleteProject,getUserProjects}
+module.exports = {createProject , getAllProjects , getProject , updateProject , deleteProject,getUserProjects,getProjectUsers}
   

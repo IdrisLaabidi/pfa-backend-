@@ -6,32 +6,26 @@ const User = require("../Models/userModel");
 
 
 //create a function to get all messages
-const getAllMessages = async ()=>{
+const getAllMessages = async (req,res)=>{
+    const projectId = req.params.id;
     try{
-        const messages = await Message.find();
-        return messages
+        if(projectId){
+            console.log(projectId)
+            const messages = await Message.find({project : projectId});
+            res.status(200).json(messages);
+        } 
     }catch(error){
+        res.status(500).json({message : 'Failed to retrieve messages',error:error})
         console.log(error);
     }
 }
 
 //create a function to add a Message
 const createMessage = async (messageData) => {
-    console.log(messageData.sender)
     const senderId = messageData.sender;
     //staamalet nested function w mshet if it works it works
     try {
-        const getAllUsers = async (senderId) => {
-            try {
-                const users = await User.find({sender: { $ne: senderId } });
-                return users;
-            } catch (error) {
-                console.log(error);
-            }
-        };
-        
-        allUsers = await getAllUsers(senderId);
-        messageData.sentTo = allUsers.map(user=>user.id);
+        console.log(messageData)
         const message = new Message(messageData);
         const savedMessage = await message.save();
         return savedMessage;
