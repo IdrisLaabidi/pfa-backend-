@@ -39,7 +39,7 @@ const login = async (req, res) => {
 
     // Find the user by email
     const user = await User.findOne({ email });
-
+    
     // If the user is not found, throw an error
     if (!user) {
       throw new Error("User not found");
@@ -57,9 +57,11 @@ const login = async (req, res) => {
     const token = generateToken(user);
 
     // Send the token and the user info as the response
-    res.cookie('token',token, { maxAge: 86400000 , httpOnly: false,secure : false })
+    res.cookie('token',token, { maxAge: 86400000 , httpOnly: false,secure : false });
     res.json({ user });
+    
   } catch (error) {
+    console.log(error)
     // Send the error message as the response
     res.status(401).json({ error: error.message });
   }
@@ -82,6 +84,7 @@ const profile =asyncHandler( async (req, res) => {
     res.json({ user });
   } catch (error) {
     // Send the error message as the response
+    console.log(error)
     res.status(404).json({ error: error.message });
   }
 });
@@ -107,10 +110,12 @@ const updateUser = asyncHandler(async (req, res) => {
 
     // If a new password is provided, hash it before saving
     if (req.body.password) {
+      const ssalt = await bcrypt.genSalt(10);
+      const currHashedPassword = await bcrypt.hash(req.body.currentPassword, ssalt);
     //check if the current password is the actual user password
       const currentPasswordMatch = await bcrypt.compare(req.body.currentPassword, user.password);
       if (!currentPasswordMatch) {
-        console.log('mdp',req.body.password);
+        
         return res.status(401).json({ message: 'Current password is incorrect' });
       }
 
@@ -118,7 +123,6 @@ const updateUser = asyncHandler(async (req, res) => {
       
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(req.body.password, salt);
-      
       // Update the password in the user object
       user.password = hashedPassword;
     }
@@ -126,16 +130,14 @@ const updateUser = asyncHandler(async (req, res) => {
     // Update other user fields
     if (req.body.firstName) user.firstName = req.body.firstName;
     if (req.body.lastName) user.lastName = req.body.lastName;
-    if (req.body.userName) user.userName = req.body.userName;
     if (req.body.email) user.email = req.body.email;
 
     // Save the updated user
-    const updatedUser = await user.updateOne();
+    const updatedUser = await User.findByIdAndUpdate(user._id, user);
 
     // Return the updated user data
     res.json(updatedUser);
   } catch (error) {
-    console.log(error);
     res.status(400).json({ error: error.message });
   }
 });
