@@ -15,21 +15,29 @@ const io = socketIo(server, {
 });
 const cors = require('cors');
 const cookieParser = require('cookie-parser')
+//routers
+const userRouter = require('./Routes/userRoutes')
+const taskRouter= require('./Routes/taskRoutes')
+const projectRouter = require('./Routes/projectRoutes')
+const leaveRouter = require('./Routes/leaveRoutes')
+const notifRouter = require('./Routes/notificationRoutes')
+//import middleware
+const { errorHandler} = require('./Middleware/errorMiddleware')
 
 
-//routes 
-const userRouter = require('./Routes/userRoutes');
-const projectRouter = require('./Routes/projectRoutes');
-const messagesRouter = require('./Routes/messagesRoute');
-const taskRouter= require('./Routes/taskRoutes');
-const leaveRouter = require('./Routes/leaveRoutes');
-const notifRouter = require('./Routes/notificationRoutes');
+// express app
+const app = express()
 
+// Enable CORS for all routes
 app.use(cors({
-  origin: 'http://localhost:3000', // or the specific origin of your front-end
+  origin: 'http://localhost:3000',
+  methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD','DELETE'],
   credentials: true
 }));
-app.use(express.json());// instead of using body parser 
+
+// middleware
+app.use(express.json()) // instead of using body parser 
+
 app.use((req, res, next) => {
   console.log(req.path, req.method)
   next()
@@ -41,6 +49,8 @@ app.use('/api/project',projectRouter)
 app.get('/api/addMessage',messagesRouter);
 app.get('/api/allMessage',messagesRouter);
 app.use('/api/task',taskRouter)
+app.use('/api/task',taskRouter)
+app.use('/api/projects',projectRouter)
 app.use('/api/leave',leaveRouter)
 app.use('/api/notification',notifRouter);
 

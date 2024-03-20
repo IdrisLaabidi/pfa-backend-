@@ -14,7 +14,7 @@ const protect = asyncHandler(async (req, res, next) => {
       token = req.headers.authorization.split(' ')[1]
 
       // Verify token
-      const decoded = jwt.verify(token,'pfa123')// must store secret key in .env file 
+      const decoded = jwt.verify(token,  process.env.SECRET_KEY)// must store secret key in .env file (which is done)
 
       // Get user from the token
       req.user = await User.findById(decoded.id).select('-password')

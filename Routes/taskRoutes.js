@@ -20,4 +20,7 @@ router.put('/tasks/:id',protect, taskController.updateTaskById);
 // Delete a task by ID
 router.delete('/tasks/:id',protect, taskController.deleteTaskById);
 
+// Get tasks associated with a project
+router.get('/projtasks/:id',protect,taskController.getTasksByProject);
+
 module.exports = router;

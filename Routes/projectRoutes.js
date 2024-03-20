@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 // import controller functions 
-const {createProject , getAllProjects , getProject , updateProject , deleteProject} = require('../Controllers/projectContoller');
+const {createProject , getAllProjects , getProject , updateProject , deleteProject,getUserProjects} = require('../Controllers/projectContoller');
 const { protect } = require('../Middleware/authMiddleware');
 
 
@@ -11,7 +11,7 @@ const { protect } = require('../Middleware/authMiddleware');
 router.post('/',protect, createProject);
 
 // Get all projects
-router.get('/',protect, getAllProjects);
+router.get('/', getAllProjects);
 
 // Get a specific project by ID
 router.get('/:id',protect, getProject);
@@ -21,5 +21,7 @@ router.put('/:id',protect, updateProject);
 
 // Delete a project by ID
 router.delete('/:id',protect, deleteProject);
+
+router.get('/myprojects/:id',protect,getUserProjects)
 
 module.exports = router;
