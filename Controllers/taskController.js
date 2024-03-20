@@ -62,6 +62,11 @@ const deleteTaskById = asyncHandler(async (req, res) => {
     if (!deletedTask) {
       return res.status(404).json({ message: 'Task not found' });
     }
+    await Project.updateOne(
+      {_id : deletedTask.project},
+      { $pull : { tasks : deletedTask._id}},
+      { new: true } 
+    )
     res.json({ message: 'Task deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });

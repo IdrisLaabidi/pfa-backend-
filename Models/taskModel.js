@@ -6,7 +6,8 @@ const TaskSchema = new mongoose.Schema({
   id: mongoose.Schema.Types.ObjectId,
   title: { type: String, required: true },
   description: { type: String },
-  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference to the User schema
+  //createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference to the User schema
+  project : { type: mongoose.Schema.Types.ObjectId, ref: 'Project', required: true},
   assignedTo: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // Array of User references
   status: { type: String, enum: ['pending', 'in-progress', 'completed'], default: 'pending' },
   priority: { type: String, enum: ['low', 'medium', 'high'], default: 'medium' },
