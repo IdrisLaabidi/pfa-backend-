@@ -24,10 +24,6 @@ const notifRouter = require('./Routes/notificationRoutes')
 //import middleware
 const { errorHandler} = require('./Middleware/errorMiddleware')
 
-
-// express app
-const app = express()
-
 // Enable CORS for all routes
 app.use(cors({
   origin: 'http://localhost:3000',
