@@ -110,8 +110,6 @@ const updateUser = asyncHandler(async (req, res) => {
 
     // If a new password is provided, hash it before saving
     if (req.body.password) {
-      const ssalt = await bcrypt.genSalt(10);
-      const currHashedPassword = await bcrypt.hash(req.body.currentPassword, ssalt);
     //check if the current password is the actual user password
       const currentPasswordMatch = await bcrypt.compare(req.body.currentPassword, user.password);
       if (!currentPasswordMatch) {
