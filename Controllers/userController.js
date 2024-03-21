@@ -3,6 +3,7 @@
 const User = require("../Models/userModel");
 const Task = require("../Models/taskModel")
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt")
 
 const asyncHandler = require('express-async-handler')
 
@@ -45,7 +46,7 @@ const login = async (req, res) => {
 
     // If the user is not found, throw an error
     if (!user) {
-      throw new Error("User not found");
+      return res.status(404).json({message:"User not found"})
     }
 
     // Compare the password with the hashed password
@@ -53,7 +54,7 @@ const login = async (req, res) => {
 
     // If the password does not match, throw an error
     if (!match) {
-      throw new Error("Invalid password");
+      return res.status(401).json({message:"Invalid password"})
     }
 
     // Generate a token for the user
@@ -137,6 +138,7 @@ const updateUser = asyncHandler(async (req, res) => {
     res.json(updatedUser);
   } catch (error) {
     res.status(400).json({ error: error.message });
+    console.log(error)
   }
 });
 
