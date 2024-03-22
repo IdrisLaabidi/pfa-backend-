@@ -6,6 +6,7 @@ const createLeave = async (req, res) => {
   try {
     const newLeaveRequest = await Leave.create(req.body);
     res.status(201).json(newLeaveRequest);
+    
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
