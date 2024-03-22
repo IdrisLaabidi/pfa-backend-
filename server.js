@@ -21,7 +21,7 @@ const app = express()
 // Enable CORS for all routes
 app.use(cors({
   origin: 'http://localhost:3000',
-  methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD'],
+  methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD','DELETE'],
   credentials: true
 }));
 
@@ -39,7 +39,7 @@ app.use(cookieParser());
 // routes
 app.use('/api/auth',userRouter)
 app.use('/api/task',taskRouter)
-app.use('/api/project',projectRouter)
+app.use('/api/projects',projectRouter)
 app.use('/api/leave',leaveRouter)
 app.use('/api/notification',notifRouter)
 
