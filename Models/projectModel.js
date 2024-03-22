@@ -13,7 +13,7 @@ const ProjectSchema = new mongoose.Schema({
   description: { type: String },
   startDate: { type: Date ,default:Date.now },
   dueDate: { type: Date },
-  status : {type : String ,enum : ['complete','in-progress']},
+  status : {type : String ,enum : ['complete','in-progress'],default : 'in-progress'},
   team: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // Array of User references
   manager: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Reference to a single User
   tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task' }], // Array of Task references

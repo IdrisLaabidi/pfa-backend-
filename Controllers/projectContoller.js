@@ -52,6 +52,11 @@ const updateProject =  asyncHandler(async (req, res) => {
         req.body,
         { new: true }
       );
+      const userIds = updatedProject.team
+      await User.updateMany(
+        {_id: {$in: userIds}},
+        {$addToSet: {projects: updatedProject._id}}
+      );
       if (!updatedProject) {
         return res.status(404).json({ message: 'Project not found' });
       }
