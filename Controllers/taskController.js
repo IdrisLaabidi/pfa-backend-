@@ -2,11 +2,11 @@
 const Task = require('../Models/taskModel'); // Import your Task model
 const asyncHandler = require('express-async-handler')
 const Project = require('../Models/projectModel')
+const User = require('../Models/userModel')
 
 // Create a new task
 const createTask = asyncHandler(async (req, res) => {
   try {
-    console.log(req.body)
     const newTask = await Task.create(req.body.task);
     const pId = req.body.id
     await Project.updateOne({_id : pId },{ $push : {tasks : newTask._id}})
@@ -62,6 +62,11 @@ const deleteTaskById = asyncHandler(async (req, res) => {
     if (!deletedTask) {
       return res.status(404).json({ message: 'Task not found' });
     }
+    await Project.updateOne(
+      {_id : deletedTask.project},
+      { $pull : { tasks : deletedTask._id}},
+      { new: true } 
+    )
     res.json({ message: 'Task deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -83,6 +88,26 @@ const getTasksByProject = asyncHandler(async (req,res) => {
       res.status(500).json({ error: error.message });
     }
 })
+//get users assigned to a certain task
+const getTaskUsers = asyncHandler(async(req,res) => {
+  try {
+    const taskId = req.params.id;
+    const task = await Task.findById(taskId)
+    let users;
+    if (task) {
+      users = task.assignedTo;
+      const teamMembers = await User.find({_id: {$in: users}});
+      users = teamMembers; // Update 'users' with the actual user objects
+    }
+    if (!task) {
+      res.status(404).json({ message: 'task not found' });
+    }
+    res.json(users);
+  } catch (error) {
+    res.status(400).json(error);
+    console.log(error);
+  }
+})
 
 module.exports = {
   createTask,
@@ -90,5 +115,6 @@ module.exports = {
   getTaskById,
   updateTaskById,
   deleteTaskById,
-  getTasksByProject
+  getTasksByProject,
+  getTaskUsers
 };
