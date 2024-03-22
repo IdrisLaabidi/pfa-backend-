@@ -44,7 +44,7 @@ const login = async (req, res) => {
 
     // Find the user by email
     const user = await User.findOne({ email });
-
+    
     // If the user is not found, throw an error
     if (!user) {
       return res.status(404).json({message:"User not found"})
@@ -64,7 +64,9 @@ const login = async (req, res) => {
     // Send the token and the user info as the response
     res.cookie('token',token, { maxAge: 86400000 , httpOnly: false,secure : false })
     res.json({ user });
+    
   } catch (error) {
+    console.log(error)
     // Send the error message as the response
     res.status(401).json({ error: error.message });
   }
@@ -87,6 +89,7 @@ const profile =asyncHandler( async (req, res) => {
     res.json({ user });
   } catch (error) {
     // Send the error message as the response
+    console.log(error)
     res.status(404).json({ error: error.message });
   }
 });

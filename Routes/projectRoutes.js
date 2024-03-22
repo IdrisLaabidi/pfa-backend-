@@ -24,6 +24,7 @@ router.delete('/:id',protect, deleteProject);
 
 // Get all projects assigned to a user
 router.get('/myprojects/:id',protect,getUserProjects)
+// Get all users assigned to a project
 
 // Get all users assigned to a project
 router.get('/projusers/:id',protect,getProjectUsers)
