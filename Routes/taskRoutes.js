@@ -23,4 +23,7 @@ router.delete('/tasks/:id',protect, taskController.deleteTaskById);
 // Get tasks associated with a project
 router.get('/projtasks/:id',protect,taskController.getTasksByProject);
 
+//get users associated with a task
+router.get('/taskusers/:id',protect,taskController.getTaskUsers);
+
 module.exports = router;
