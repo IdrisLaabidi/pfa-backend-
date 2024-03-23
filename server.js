@@ -1,10 +1,25 @@
-require('dotenv').config(); 
+require('dotenv').config(); // import the config file 
 
 const express = require('express');//imports the express framework
 const http = require('http');//import http module from nodejs
 const socketIo = require('socket.io');//import socket.io which enables RTC(RealTimeCommunication) between clients and a server
 const mongoose = require('mongoose');
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
+//importing routers
+const userRouter = require('./Routes/userRoutes')
+const taskRouter= require('./Routes/taskRoutes')
+const projectRouter = require('./Routes/projectRoutes')
+const leaveRouter = require('./Routes/leaveRoutes')
+const notifRouter = require('./Routes/notificationRoutes')
+const messagesRouter = require('./Routes/messagesRoute')
+//import middleware
+const { errorHandler} = require('./Middleware/errorMiddleware')
+//import addMessage from controller it's all in the back better than using the api in the front
+const {createMessage} = require('./Controllers/messagesController')
+
 const app = express();//create express app
+
 const server = http.createServer(app);//create http server
 const io = socketIo(server, {
   cors: {
@@ -12,20 +27,7 @@ const io = socketIo(server, {
     /*              cors(CrossOrigineResourceSharing) (*)===>let anyone within the netwrok to connect to the server   */
   }
 });
-const cors = require('cors');
-const cookieParser = require('cookie-parser')
-//routers
-const userRouter = require('./Routes/userRoutes')
-const taskRouter= require('./Routes/taskRoutes')
-const projectRouter = require('./Routes/projectRoutes')
-const leaveRouter = require('./Routes/leaveRoutes')
-const notifRouter = require('./Routes/notificationRoutes')
-const messagesRouter = require('./Routes/messagesRoute')
 
-//import middleware
-const { errorHandler} = require('./Middleware/errorMiddleware')
-//import addMessage from controller it's all in the back better than using the api in the front
-const {createMessage} = require('./Controllers/messagesController')
 // Enable CORS for all routes
 app.use(cors({
   origin: 'http://localhost:3000',
