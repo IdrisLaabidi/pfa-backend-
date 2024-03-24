@@ -4,6 +4,7 @@ const User = require("../Models/userModel");
 const Task = require("../Models/taskModel")
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt")
+const Leave = require("../Models/leaveModel");
 
 const asyncHandler = require('express-async-handler')
 
@@ -175,5 +176,21 @@ const getUsersByTask = asyncHandler( async (req,res) => {
   }
 })
 
+const getUserFromLeaves = asyncHandler(async (req, res) => {
+  try {
+    const leaves = await Leave.find({}); // Get all leaves
+    const userIds = leaves.map(leave => leave.concernedUser); // Extract concernedUser ids from leaves
+    
+    const users = await User.find({ _id: { $in: userIds } }); // Find users based on the extracted ids
+    
+    // You might want to handle the case where no users are found based on the provided IDs
+    
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 // Export the controller functions
-module.exports = { register, login, profile ,getAllUsers ,updateUser, deleteUser,getUsersByTask};
+module.exports = { register, login, profile ,getAllUsers ,updateUser, deleteUser,getUsersByTask,getUserFromLeaves };
