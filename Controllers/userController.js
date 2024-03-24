@@ -2,6 +2,7 @@
 // Import modules
 const User = require("../Models/userModel");
 const Task = require("../Models/taskModel")
+const Project = require("../Models/projectModel")
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt")
 const Leave = require("../Models/leaveModel");
@@ -146,6 +147,45 @@ const updateUser = asyncHandler(async (req, res) => {
     console.log(error)
   }
 });
+const updateUserAdmin = asyncHandler(async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // If a new password is provided, hash it before saving
+    if (req.body.password) {
+    //check if the current password is the actual user password
+      const currentPasswordMatch = req.body.currentPassword === user.password
+      if (!currentPasswordMatch) {
+        
+        return res.status(401).json({ message: 'Current password is incorrect' });
+      }
+
+      // Hash the new password
+      
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(req.body.password, salt);
+      // Update the password in the user object
+      user.password = hashedPassword;
+    }
+
+    // Update other user fields
+    if (req.body.firstName) user.firstName = req.body.firstName;
+    if (req.body.lastName) user.lastName = req.body.lastName;
+    if (req.body.email) user.email = req.body.email;
+
+    // Save the updated user
+    const updatedUser = await User.findByIdAndUpdate(user._id, user);
+
+    // Return the updated user data
+    res.json(updatedUser);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+    console.log(error)
+  }
+});
 
 // create a function to delete a user 
 const deleteUser =asyncHandler( async (req, res) => {
@@ -153,6 +193,26 @@ const deleteUser =asyncHandler( async (req, res) => {
     const deletedUser = await User.findByIdAndDelete(req.params.id);
     if (!deletedUser) {
       return res.status(404).json({ message: 'User not found' });
+    }
+    if(deletedUser.role === 'leader'){
+      const deletedProject = await Project.deleteMany({ manager : deleteUser._id})
+      /*// get the team members of the project
+      const userIds = deletedProject.team;
+      // update users' "projects" array to remove the deleted project id
+      await User.updateMany(
+          { _id: { $in: userIds } },
+          { $pull: { projects:deletedProject._id } }
+      );
+      //delete all messages associated with the project
+      await Message.deleteMany({project: deletedProject._id});
+      //delete all tasks associated with the project
+      await Task.deleteMany({project: deletedProject._id});*/
+    }
+    if(deletedUser.role === 'member'){
+      const projects = await Project.updateMany({ _id: { $in: deleteUser.projects } },
+        { $pull: { team : deletedUser._id } })
+
+      const tasks = await Task.updateMany({assignedTo : deleteUser._id} , { $pull : deleteUser._id})
     }
     res.json({ message: 'User deleted successfully' });
   } catch (error) {
@@ -193,4 +253,4 @@ const getUserFromLeaves = asyncHandler(async (req, res) => {
 
 
 // Export the controller functions
-module.exports = { register, login, profile ,getAllUsers ,updateUser, deleteUser,getUsersByTask,getUserFromLeaves };
+module.exports = { register, login, profile ,getAllUsers ,updateUser, deleteUser,getUsersByTask,updateUserAdmin};

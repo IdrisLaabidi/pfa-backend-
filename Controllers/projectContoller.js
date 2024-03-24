@@ -3,6 +3,8 @@ const asyncHandler = require('express-async-handler')
 //import modules 
 const Project = require('../Models/projectModel')
 const User = require('../Models/userModel')
+const Message = require('../Models/messageModel')
+const Task = require('../Models/taskModel')
 
 //create a function to add a project 
 const createProject =asyncHandler(async (req,res) => {
@@ -93,6 +95,10 @@ const deleteProject = asyncHandler(async (req, res) => {
           { _id: { $in: userIds } },
           { $pull: { projects: projectToDelete._id } }
       );
+      //delete all messages associated with the project
+      await Message.deleteMany({project: req.params.id});
+      //delete all tasks associated with the project
+      await Task.deleteMany({project: req.params.id});
       // delete the project
       await Project.findByIdAndDelete(req.params.id);
       res.status(200).json({ message: 'Project deleted successfully' });
