@@ -2,6 +2,7 @@
 // Import modules
 const User = require("../Models/userModel");
 const Task = require("../Models/taskModel")
+const Project = require("../Models/projectModel")
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt")
 
@@ -151,6 +152,26 @@ const deleteUser =asyncHandler( async (req, res) => {
     const deletedUser = await User.findByIdAndDelete(req.params.id);
     if (!deletedUser) {
       return res.status(404).json({ message: 'User not found' });
+    }
+    if(deletedUser.role === 'leader'){
+      const deletedProject = await Project.deleteMany({ manager : deleteUser._id})
+      /*// get the team members of the project
+      const userIds = deletedProject.team;
+      // update users' "projects" array to remove the deleted project id
+      await User.updateMany(
+          { _id: { $in: userIds } },
+          { $pull: { projects:deletedProject._id } }
+      );
+      //delete all messages associated with the project
+      await Message.deleteMany({project: deletedProject._id});
+      //delete all tasks associated with the project
+      await Task.deleteMany({project: deletedProject._id});*/
+    }
+    if(deletedUser.role === 'member'){
+      const projects = await Project.updateMany({ _id: { $in: deleteUser.projects } },
+        { $pull: { team : deletedUser._id } })
+
+      const tasks = await Task.updateMany({assignedTo : deleteUser._id} , { $pull : deleteUser._id})
     }
     res.json({ message: 'User deleted successfully' });
   } catch (error) {

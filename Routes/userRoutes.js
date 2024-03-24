@@ -12,7 +12,7 @@ router.post('/createuser', register);
 router.get('/users',protect, getAllUsers);
 
 // Get a specific user by ID
-router.get('/users/:id',protect, profile);
+router.get('/users/:id', profile);
 
 // Login route
 router.post('/login', login);

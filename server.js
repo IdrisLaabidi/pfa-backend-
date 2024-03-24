@@ -63,9 +63,7 @@ mongoose.connect(process.env.MONGO_URI)
 .catch(
   (err) => console.log(err)
 );
-io.on('connection', async (socket) => { /*on method is able to listen to an event on(eventnamestring,event function) when client triggers that
-                                  event the function is being calledback NB:eventnamestring is abitrarr(li howa) yaany mayhemesh lesm
-                                  it has to match the name in the client side            */
+io.on('connection', async (socket) => { 
   console.log('a user connected:', socket.id);
   socket.on('disconnect', () => {//same thing
     io.emit('user-left', socket.id);
