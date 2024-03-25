@@ -1,5 +1,6 @@
 // Import necessary modules
 const Leave = require('../Models/leaveModel'); // Import your Leave model
+const User = require('../Models/userModel');
 
 // Create a new leave request
 const createLeave = async (req, res) => {
@@ -15,7 +16,9 @@ const createLeave = async (req, res) => {
 // Get all leave requests
 const getAllLeaves = async (req, res) => {
   try {
-    const leaveRequests = await Leave.find().populate('concernedUser');
+    const leaveRequests = await Leave.find().populate("concernedUser");
+   
+    
     res.json(leaveRequests);
   } catch (error) {
     res.status(500).json({ error: error.message });

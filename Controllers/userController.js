@@ -145,6 +145,45 @@ const updateUser = asyncHandler(async (req, res) => {
     console.log(error)
   }
 });
+const updateUserAdmin = asyncHandler(async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // If a new password is provided, hash it before saving
+    if (req.body.password) {
+    //check if the current password is the actual user password
+      const currentPasswordMatch = req.body.currentPassword === user.password
+      if (!currentPasswordMatch) {
+        
+        return res.status(401).json({ message: 'Current password is incorrect' });
+      }
+
+      // Hash the new password
+      
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(req.body.password, salt);
+      // Update the password in the user object
+      user.password = hashedPassword;
+    }
+
+    // Update other user fields
+    if (req.body.firstName) user.firstName = req.body.firstName;
+    if (req.body.lastName) user.lastName = req.body.lastName;
+    if (req.body.email) user.email = req.body.email;
+
+    // Save the updated user
+    const updatedUser = await User.findByIdAndUpdate(user._id, user);
+
+    // Return the updated user data
+    res.json(updatedUser);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+    console.log(error)
+  }
+});
 
 // create a function to delete a user 
 const deleteUser =asyncHandler( async (req, res) => {
@@ -196,4 +235,4 @@ const getUsersByTask = asyncHandler( async (req,res) => {
 })
 
 // Export the controller functions
-module.exports = { register, login, profile ,getAllUsers ,updateUser, deleteUser,getUsersByTask};
+module.exports = { register, login, profile ,getAllUsers ,updateUser, deleteUser,getUsersByTask,updateUserAdmin};
