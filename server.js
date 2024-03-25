@@ -51,6 +51,8 @@ app.use('/api/projects',projectRouter)
 app.use('/api/leave',leaveRouter)
 app.use('/api/notification',notifRouter);
 
+
+
 mongoose.connect(process.env.MONGO_URI)
 .then( () => {
   console.log("connected to db");

@@ -7,6 +7,7 @@ const createLeave = async (req, res) => {
   try {
     const newLeaveRequest = await Leave.create(req.body);
     res.status(201).json(newLeaveRequest);
+    
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -17,8 +18,6 @@ const createLeave = async (req, res) => {
 const getAllLeaves = async (req, res) => {
   try {
     const leaveRequests = await Leave.find().populate("concernedUser");
-   
-    
     res.json(leaveRequests);
   } catch (error) {
     res.status(500).json({ error: error.message });
