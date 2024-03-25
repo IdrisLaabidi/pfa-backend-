@@ -9,7 +9,8 @@ const LeaveSchema = new mongoose.Schema({
     reason : {type : String},
     type : { type : String , enum : ['sick leave','annual','normal'],default : 'normal'},
     concernedUser : {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-    status : {type : String , enum : ['pending' , 'confirmed' ,'declined'] ,default : 'pending'}
+    status : {type : String , enum : ['pending' , 'confirmed' ,'declined'] ,default : 'pending'},
+    createdAt: {type:Date, default: Date.now()}
 })
 
 module.exports = mongoose.model('Leave',LeaveSchema)

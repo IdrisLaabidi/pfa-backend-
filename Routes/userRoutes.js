@@ -29,7 +29,5 @@ router.delete('/users/:id', protect ,deleteUser);
 // get users by task (assigned to)
 router.get('/taskusers/:id',protect,getUsersByTask)
 
-//get users from leaves 
-router.get('/Leaveusers',getUserFromLeaves );
 
 module.exports = router;
