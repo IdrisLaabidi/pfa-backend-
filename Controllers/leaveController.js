@@ -1,6 +1,7 @@
 // Import necessary modules
 const Leave = require('../Models/leaveModel'); // Import your Leave model
-const User = require('../Models/userModel');
+const Notif= require('../Models/notificationModel')
+const { format } =require('date-fns');
 
 // Create a new leave request
 const createLeave = async (req, res) => {
@@ -48,9 +49,19 @@ const updateLeaveById = async (req, res) => {
     if (!updatedLeaveRequest) {
       return res.status(404).json({ message: 'Leave request not found' });
     }
+    if (updatedLeaveRequest.status === 'confirmed')
+    {
+        const notification = await Notif.create({content: "The leave request you submitted on "+ format(new Date(updatedLeaveRequest.createdAt), 'dd/MM/yyyy')+ " has been approved. " , sentTo:updatedLeaveRequest.concernedUser});
+    }
+    if (updatedLeaveRequest.status === 'declined')
+    {
+        const notification = await Notif.create({content: "The leave request you submitted on "+ format(new Date(updatedLeaveRequest.createdAt), 'dd/MM/yyyy')+ " is declined " , sentTo:updatedLeaveRequest.concernedUser});
+    }
     res.json(updatedLeaveRequest);
+    
   } catch (error) {
     res.status(400).json({ error: error.message });
+    console.log(error)
   }
 };
 
