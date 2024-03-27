@@ -1,12 +1,14 @@
 // Import necessary modules
 const Leave = require('../Models/leaveModel'); // Import your Leave model
-const User = require('../Models/userModel');
+const Notif= require('../Models/notificationModel')
+const { format } =require('date-fns');
 
 // Create a new leave request
 const createLeave = async (req, res) => {
   try {
     const newLeaveRequest = await Leave.create(req.body);
     res.status(201).json(newLeaveRequest);
+    
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -17,8 +19,6 @@ const createLeave = async (req, res) => {
 const getAllLeaves = async (req, res) => {
   try {
     const leaveRequests = await Leave.find().populate("concernedUser");
-   
-    
     res.json(leaveRequests);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -49,9 +49,19 @@ const updateLeaveById = async (req, res) => {
     if (!updatedLeaveRequest) {
       return res.status(404).json({ message: 'Leave request not found' });
     }
+    if (updatedLeaveRequest.status === 'confirmed')
+    {
+        const notification = await Notif.create({content: "The leave request you submitted on "+ format(new Date(updatedLeaveRequest.createdAt), 'dd/MM/yyyy')+ " has been approved. " , sentTo:updatedLeaveRequest.concernedUser});
+    }
+    if (updatedLeaveRequest.status === 'declined')
+    {
+        const notification = await Notif.create({content: "The leave request you submitted on "+ format(new Date(updatedLeaveRequest.createdAt), 'dd/MM/yyyy')+ " is declined " , sentTo:updatedLeaveRequest.concernedUser});
+    }
     res.json(updatedLeaveRequest);
+    
   } catch (error) {
     res.status(400).json({ error: error.message });
+    console.log(error)
   }
 };
 
