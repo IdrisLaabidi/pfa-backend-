@@ -5,6 +5,7 @@ const Task = require("../Models/taskModel")
 const Project = require("../Models/projectModel")
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt")
+const Leave = require("../Models/leaveModel");
 
 const asyncHandler = require('express-async-handler')
 
@@ -31,6 +32,7 @@ const register = async (req, res) => {
     res.json( user );
   } catch (error) {
     // Send the error message as the response
+    console.log(error.message)
     res.status(400).json({ error: error.message });
     console.log(error)
   }
@@ -233,6 +235,9 @@ const getUsersByTask = asyncHandler( async (req,res) => {
     res.status(500).send({ error: error.message })
   }
 })
+
+
+
 
 // Export the controller functions
 module.exports = { register, login, profile ,getAllUsers ,updateUser, deleteUser,getUsersByTask,updateUserAdmin};
