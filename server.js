@@ -54,23 +54,35 @@ app.use('/api/notification',notifRouter);
 
 
 mongoose.connect(process.env.MONGO_URI)
-.then( () => {
-  console.log("connected to db");
-  // listen for requests
-  app.listen(process.env.PORT, () => {
-    console.log('listening on port', process.env.PORT||4000)
-  })
- }
-)
-.catch(
-  (err) => console.log(err)
-);
-io.on('connection', async (socket) => { 
+.then(() => {
+  console.log('MongoDB connected');
+  const db = mongoose.connection;
+  const collection = db.collection('messages');
+  const changeStream = collection.watch();
+
+  changeStream.on('change', function(change) {
+    if (change.operationType === 'insert') {
+      // New document inserted, send the inserted document to WebSocket clients
+      const newMessage = change.fullDocument;
+      const messageString = JSON.stringify(newMessage);
+      io.emit('chat message',messageString);
+    }
+  });
+})
+.catch((error) => {
+  console.error('MongoDB connection error:', error);
+});
+io.on('connection', async (socket) => { /*on method is able to listen to an event on(eventnamestring,event function) when client triggers that
+                                  event the function is being calledback NB:eventnamestring is abitrarr(li howa) yaany mayhemesh lesm
+                                  it has to match the name in the client side            */
   console.log('a user connected:', socket.id);
   socket.on('disconnect', () => {//same thing
     io.emit('user-left', socket.id);
     console.log('a user disconnected', socket.id);
   });
+  socket.on('meet chat message',(msg)=>{
+    io.emit('meet chat message',msg);
+  })
   socket.on('join-room', (userId, roomId) => {
     // Join the room
     socket.join(roomId);
@@ -83,7 +95,6 @@ io.on('connection', async (socket) => {
   socket.on('chat message', async (msg) => {
     try {
         await createMessage(msg);
-        io.emit('chat message', msg); // Emit the saved message
     } catch (error) {
         console.error('Error sending message:', error);
         // Handle the error {ya men 7yé}

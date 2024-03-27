@@ -9,14 +9,18 @@ const User = require("../Models/userModel");
 const getAllMessages = async (req,res)=>{
     const projectId = req.params.id;
     try{
+        if (projectId === 'null') {
+            // Handle the case where projectId is null
+            return res.status(400).json({ error: 'Invalid projectId provided' });
+        }
         if(projectId){
-            console.log(projectId)
+            
             const messages = await Message.find({project : projectId});
             res.status(200).json(messages);
         } 
     }catch(error){
         res.status(500).json({message : 'Failed to retrieve messages',error:error})
-        console.log(error);
+       
     }
 }
 
@@ -25,7 +29,7 @@ const createMessage = async (messageData) => {
     const senderId = messageData.sender;
     //staamalet nested function w mshet if it works it works
     try {
-        console.log(messageData)
+        
         const message = new Message(messageData);
         const savedMessage = await message.save();
         return savedMessage;
