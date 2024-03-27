@@ -63,7 +63,7 @@ mongoose.connect(process.env.MONGO_URI)
       // New document inserted, send the inserted document to WebSocket clients
       const newMessage = change.fullDocument;
       const messageString = JSON.stringify(newMessage);
-      io.emit('chat message',newMessage);
+      io.emit('chat message',messageString);
     }
   });
 })
@@ -78,6 +78,9 @@ io.on('connection', async (socket) => { /*on method is able to listen to an even
     io.emit('user-left', socket.id);
     console.log('a user disconnected', socket.id);
   });
+  socket.on('meet chat message',(msg)=>{
+    io.emit('meet chat message',msg);
+  })
   socket.on('join-room', (userId, roomId) => {
     // Join the room
     socket.join(roomId);
