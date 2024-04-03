@@ -27,7 +27,7 @@ const getAllNotifications = asyncHandler(async (req, res) => {
 const getNotificationById = asyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
-    const notification = await Notification.findById(id);
+    const notification = await Notification.find({sentTo:id});
     if (!notification) {
       return res.status(404).json({ message: 'Notification not found' });
     }
