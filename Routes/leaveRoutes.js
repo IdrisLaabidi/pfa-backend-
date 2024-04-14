@@ -44,7 +44,7 @@
  * tags:
  *   name: Leaves
  *   description: API for managing leave requests
- * /createleave:
+ * /api/leave/createleave:
  *   post:
  *     summary: Create a new leave request
  *     tags: [Leaves]
@@ -65,7 +65,7 @@
  *               $ref: '#/components/schemas/Leave'
  *       500:
  *         description: Some server error
- * /leaves:
+ * /api/leave/leaves:
  *   get:
  *     summary: Get all leave requests
  *     tags: [Leaves]
@@ -80,7 +80,7 @@
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Leave'
- * /leaves/{id}:
+ * /api/leave/leaves/{id}:
  *   get:
  *     summary: Get a specific leave request by ID
  *     tags: [Leaves]

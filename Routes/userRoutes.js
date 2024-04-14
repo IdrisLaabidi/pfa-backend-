@@ -53,7 +53,7 @@
  * tags:
  *   name: Users
  *   description: API for managing users
- * /register:
+ * /api/auth/createuser:
  *   post:
  *     summary: Register a new user
  *     tags: [Users]
@@ -72,7 +72,7 @@
  *               $ref: '#/components/schemas/User'
  *       400:
  *         description: Error registering user
- * /login:
+ * /api/auth/login:
  *   post:
  *     summary: Log in an existing user
  *     tags: [Users]
@@ -101,7 +101,7 @@
  *         description: Invalid credentials
  *       404:
  *         description: User not found
- * /users:
+ * /api/auth/users:
  *   get:
  *     summary: Get all users
  *     tags: [Users]
@@ -114,6 +114,7 @@
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/User'
+ * /api/auth/users/{id}:
  *   put:
  *     summary: Update a user by ID
  *     tags: [Users]
@@ -141,7 +142,6 @@
  *         description: Error updating user
  *       404:
  *         description: User not found
- * /users/{id}:
  *   delete:
  *     summary: Delete a user by ID
  *     tags: [Users]
@@ -159,7 +159,7 @@
  *         description: User not found
  *       500:
  *         description: Server error
- * /users/{id}/tasks:
+ * /api/auth/taskusers/{id}:
  *   get:
  *     summary: Get users associated with a task
  *     tags: [Users]

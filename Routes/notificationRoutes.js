@@ -27,7 +27,7 @@
  * tags:
  *   name: Notifications
  *   description: API for managing notifications
- * /notifications:
+ * /api/notification/notifications:
  *   post:
  *     summary: Create a new notification
  *     tags: [Notifications]
@@ -60,7 +60,7 @@
  *                 $ref: '#/components/schemas/Notification'
  *       500:
  *         description: Server error
- * /notifications/{id}:
+ * /api/notification/notifications/{id}:
  *   get:
  *     summary: Get a specific notification by ID
  *     tags: [Notifications]

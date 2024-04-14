@@ -55,7 +55,7 @@
  * tags:
  *   name: Tasks
  *   description: API for managing tasks
- * /tasks:
+ * /api/task/createtask:
  *   post:
  *     summary: Create a new task
  *     tags: [Tasks]
@@ -74,6 +74,7 @@
  *               $ref: '#/components/schemas/Task'
  *       400:
  *         description: Error creating task
+ * /api/tasks/tasks:
  *   get:
  *     summary: Get all tasks
  *     tags: [Tasks]
@@ -88,7 +89,7 @@
  *                 $ref: '#/components/schemas/Task'
  *       500:
  *         description: Server error
- * /tasks/{id}:
+ * /api/tasks/tasks/{id}:
  *   get:
  *     summary: Get a specific task by ID
  *     tags: [Tasks]
@@ -154,7 +155,7 @@
  *         description: Task not found
  *       500:
  *         description: Server error
- * /tasks/project/{id}:
+ * /api/task/projtask/{id}:
  *   get:
  *     summary: Get all tasks associated with a project
  *     tags: [Tasks]
@@ -176,7 +177,7 @@
  *                 $ref: '#/components/schemas/Task'
  *       500:
  *         description: Server error
- * /tasks/users/{id}:
+ * /api/task/taskusers/{id}:
  *   get:
  *     summary: Get users assigned to a certain task
  *     tags: [Tasks]

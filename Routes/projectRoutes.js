@@ -51,7 +51,7 @@
  * tags:
  *   name: Projects
  *   description: API for managing projects
- * /projects:
+ * /api/projects:
  *   post:
  *     summary: Create a new project
  *     tags: [Projects]
@@ -82,7 +82,7 @@
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Project'
- * /projects/{id}:
+ * /api/projects/{id}:
  *   get:
  *     summary: Get a specific project by ID
  *     tags: [Projects]
