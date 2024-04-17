@@ -6,7 +6,8 @@ const Project = require("../Models/projectModel")
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt")
 const Leave = require("../Models/leaveModel");
-
+const {ref, uploadBytes, getDownloadURL } = require('firebase/storage');
+const {storage } = require('../firebase-client-config')
 const asyncHandler = require('express-async-handler')
 
 // Create a function to generate a token
@@ -87,6 +88,7 @@ const profile =asyncHandler( async (req, res) => {
     if (!user) {
       throw new Error("User not found");
     }
+    
     // Send the user info as the response
     res.json({ user });
   } catch (error) {
@@ -136,7 +138,22 @@ const updateUser = asyncHandler(async (req, res) => {
     if (req.body.firstName) user.firstName = req.body.firstName;
     if (req.body.lastName) user.lastName = req.body.lastName;
     if (req.body.email) user.email = req.body.email;
+    console.log(req.body.profilePicture)
+    if (req.body.profilePicture) {
+      
+      //kharjet data mel image objString b ta7ayol
+      const image =  req.body.profilePicture 
+      const base64Image =  image.split(",")[1];
+      const buffer = Buffer.from(base64Image, 'base64');//Node.js takes the base64-encoded string (base64Image) and decodes it into binary data
 
+      // Upload the profile picture to Firebase Storage
+      const imageRef = ref(storage, `profileImages/${user._id}/profile-picture.png`);
+      await uploadBytes(imageRef, buffer);
+
+      // Get the download URL of the uploaded file
+      const pictureURL = await getDownloadURL(imageRef);
+      user.pictureURL = pictureURL;
+    }
     // Save the updated user
     const updatedUser = await User.findByIdAndUpdate(user._id, user);
 
