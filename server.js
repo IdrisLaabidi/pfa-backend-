@@ -6,6 +6,9 @@ const socketIo = require('socket.io');//import socket.io which enables RTC(RealT
 const mongoose = require('mongoose');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const swaggerjsdoc = require('swagger-jsdoc')
+const swaggerUi = require('swagger-ui-express')
+
 //importing routers
 const userRouter = require('./Routes/userRoutes')
 const taskRouter= require('./Routes/taskRoutes')
@@ -51,7 +54,30 @@ app.use('/api/projects',projectRouter)
 app.use('/api/leave',leaveRouter)
 app.use('/api/notification',notifRouter);
 
-
+//api documentation with swagger
+const options = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "WorkElite Express API DOCS with Swagger",
+      version: "0.1.0",
+      description:
+        "This is the backend of our project made with Express and documented with Swagger",
+    },
+    servers: [
+      {
+        url: "http://localhost:4000/",
+      },
+    ],
+  },
+  apis: ["./Routes/*.js"],
+}
+const spacs = swaggerjsdoc(options)
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(spacs)
+)
 
 mongoose.connect(process.env.MONGO_URI)
 .then(() => {
