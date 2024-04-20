@@ -6,6 +6,7 @@ const socketIo = require('socket.io');//import socket.io which enables RTC(RealT
 const mongoose = require('mongoose');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const swaggerjsdoc = require('swagger-jsdoc')
 const swaggerUi = require('swagger-ui-express')
 
@@ -39,7 +40,8 @@ app.use(cors({
 }));
 
 // middleware
-app.use(express.json()) // instead of using body parser 
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
   console.log(req.path, req.method)
@@ -67,6 +69,7 @@ const options = {
     servers: [
       {
         url: "https://meetserver.onrender.com/",
+        url: "http://localhost:4000",
       },
     ],
   },
