@@ -11,7 +11,7 @@ const UserSchema = new mongoose.Schema({
   password: { type: String, required: true },
   role: { type: String, enum: ['leader', 'member','admin'], default: 'member' },
   isActive: { type: Boolean, default: true },
-  pictureURL: { type: String }, // You can add validation rules for URLs if required
+  pictureURL: { type: String, default: 'none' }, // You can add validation rules for URLs if required
   leaveCount: { type: Number, default: 90 },
   projects:[{ type: mongoose.Schema.Types.ObjectId, ref: 'Project'}],//for member users 
 });
